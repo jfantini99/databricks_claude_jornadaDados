@@ -11,7 +11,7 @@ include:
 variables:
   catalog:
     description: The catalog to use
-  schema:
+  schema:repo crete
     description: The schema to use
 
 targets:
