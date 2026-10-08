@@ -1,0 +1,47 @@
+name: CI/CD
+
+# CI: roda em todo Pull Request e em todo push na main.
+# CD: o deploy em prod só roda em push na main, depois que a CI passou
+#     e que alguém aprovou o environment "prod" (configurado no GitHub).
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+env:
+  DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+  DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+
+jobs:
+  ci:
+    name: Lint e validação do bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Instalar dependências
+        run: uv sync --dev
+
+      - name: Lint (ruff)
+        run: uv run ruff check .
+
+      - uses: databricks/setup-cli@main
+
+      - name: Validar o bundle (target dev)
+        run: databricks bundle validate -t dev
+
+  deploy-prod:
+    name: Deploy em prod
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: databricks/setup-cli@main
+
+      - name: Deploy do bundle (target prod)
+        run: databricks bundle deploy -t prod
