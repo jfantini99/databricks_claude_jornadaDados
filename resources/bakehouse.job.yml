@@ -1,0 +1,15 @@
+resources:
+  jobs:
+    bakehouse_job:
+      name: bakehouse_medallion_job
+
+      # Runs once a day. Paused automatically in the dev target (mode: development).
+      trigger:
+        periodic:
+          interval: 1
+          unit: DAYS
+
+      tasks:
+        - task_key: refresh_medallion_pipeline
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.bakehouse_pipeline.id}

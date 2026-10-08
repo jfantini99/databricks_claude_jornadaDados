@@ -7,12 +7,17 @@ bundle:
 include:
   - resources/*.yml
 
-# Variable declarations. These variables are assigned in the dev/prod targets below.
+# The catalog is the ONLY thing that differs between environments, and it is decided
+# here, per target. Never hardcode a catalog name in any other file:
+#   - YAML resources use ${var.catalog}
+#   - pipeline SQL uses ${medallion_catalog} (pipeline configuration)
 variables:
   catalog:
-    description: The catalog to use
-  schema:repo crete
-    description: The schema to use
+    description: The Unity Catalog catalog that holds the bronze/silver/gold schemas
+  warehouse_id:
+    description: SQL warehouse used by the AI/BI dashboard
+    lookup:
+      warehouse: "Serverless Starter Warehouse"
 
 targets:
   dev:
@@ -26,7 +31,6 @@ targets:
       host: https://dbc-a0a7238f-b942.cloud.databricks.com
     variables:
       catalog: workspace
-      schema: ${workspace.current_user.short_name}
   prod:
     mode: production
     workspace:
@@ -35,7 +39,6 @@ targets:
       root_path: /Workspace/Users/joaofantini01@gmail.com/.bundle/${bundle.name}/${bundle.target}
     variables:
       catalog: workspace
-      schema: prod
     permissions:
       - user_name: joaofantini01@gmail.com
         level: CAN_MANAGE

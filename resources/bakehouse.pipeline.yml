@@ -1,0 +1,20 @@
+resources:
+  pipelines:
+    bakehouse_pipeline:
+      name: bakehouse_medallion
+      serverless: true
+      channel: CURRENT
+      catalog: ${var.catalog}
+      # Default publishing schema; every dataset is fully qualified in its SQL file.
+      schema: ${resources.schemas.bronze.name}
+
+      # Single source of truth for names: the bundle. SQL reads these as ${...}.
+      configuration:
+        medallion_catalog: ${var.catalog}
+        bronze_schema: ${resources.schemas.bronze.name}
+        silver_schema: ${resources.schemas.silver.name}
+        gold_schema: ${resources.schemas.gold.name}
+
+      libraries:
+        - glob:
+            include: ../src/pipelines/bakehouse/transformations/**
