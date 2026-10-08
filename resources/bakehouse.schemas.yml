@@ -1,0 +1,16 @@
+resources:
+  schemas:
+    bronze:
+      name: bronze
+      catalog_name: ${var.catalog}
+      comment: Raw ingestion of samples.bakehouse, with ingestion metadata columns.
+
+    silver:
+      name: silver
+      catalog_name: ${var.catalog}
+      comment: Cleaned and conformed Bakehouse data (typed, standardized, enriched).
+
+    gold:
+      name: gold
+      catalog_name: ${var.catalog}
+      comment: BI-ready Bakehouse marts feeding the AI/BI dashboard.

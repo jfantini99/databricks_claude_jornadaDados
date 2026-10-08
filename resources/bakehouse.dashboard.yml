@@ -1,0 +1,10 @@
+resources:
+  dashboards:
+    bakehouse_dashboard:
+      display_name: Bakehouse - Sales & Satisfaction
+      file_path: ../src/dashboards/bakehouse.lvdash.json
+      warehouse_id: ${var.warehouse_id}
+      # Queries in the JSON use bare table names; catalog/schema are injected here,
+      # so the dashboard follows whichever target (dev/prod) is deployed.
+      dataset_catalog: ${var.catalog}
+      dataset_schema: ${resources.schemas.gold.name}
